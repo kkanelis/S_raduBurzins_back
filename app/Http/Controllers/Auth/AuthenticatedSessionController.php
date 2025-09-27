@@ -15,16 +15,28 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        $validated = $request->validate([
+            "email" => ['required'],
+            "password" => ["required"]
+        ]);
 
+
+        if (!Auth::attempt($validated)) {
+            throw ValidationException::withMessages([
+                "email" => "Parole vai epasts nav pareizs",
+                "password" => "Parole vai epasts nav pareizs",
+              ]);
+        }
+    
         $user = Auth::user();
-
+    
         if (!$user->is_approved) {
             Auth::logout();
             throw ValidationException::withMessages([
                 'email' => ['Tavs lietotāja konts vēl nav apstiprināts.'],
             ]);
         }
+
 
         $token = $user->createToken('auth-token')->plainTextToken;
 

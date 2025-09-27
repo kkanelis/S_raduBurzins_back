@@ -44,6 +44,14 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
+     * Get the user's special days.
+     */
+    public function specialDays()
+    {
+        return $this->hasMany(SpecialDay::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

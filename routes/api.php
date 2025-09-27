@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\SpecialDayController;
 use App\Http\Controllers\ChatMessageController;
+use App\Http\Controllers\UserStatusController;
 
 // Public routes for authentication
 Route::post('register', [RegisteredUserController::class, 'store']);
@@ -24,8 +25,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/special-days', [SpecialDayController::class, 'store']);
     Route::get('/user/special-days', [SpecialDayController::class, 'userSpecialDays']);
 
-
-
+    // User status routes
+    Route::get('/users/status', [UserStatusController::class, 'index']);
+    Route::post('/users/status', [UserStatusController::class, 'updateStatus']);
+    
 
 });
 
