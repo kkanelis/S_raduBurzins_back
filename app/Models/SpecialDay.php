@@ -12,13 +12,11 @@ class SpecialDay extends Model
         'title',
         'description',
         'date',
-        'is_approved',
         'repeats'
     ];
 
     protected $casts = [
         'date' => 'date',
-        'is_approved' => 'boolean',
         'repeats' => 'boolean'
     ];
 

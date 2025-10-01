@@ -61,10 +61,16 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
-    // Add this accessor for the name
-    public function getNameAttribute(): string
+    // Update the accessor to use the newer syntax
+    public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    // You can also keep the name accessor if needed
+    public function getNameAttribute(): string
+    {
+        return $this->getFullNameAttribute();
     }
 
     public function canAccessPanel(Panel $panel): bool
