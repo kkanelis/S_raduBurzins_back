@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\SpecialDay;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -34,6 +35,36 @@ class UserResource extends Resource
                     ->label('Last Name'),
                 Forms\Components\TextInput::make('nickname')
                     ->label('Nickname'),
+                Forms\Components\DatePicker::make('date_of_birth')
+                    ->required()
+                    ->maxDate(now())
+                    ->label('Date of Birth')
+                    ->afterStateUpdated(function ($record, $state) {
+                        if ($record && $state) {
+                            // Find existing birthday special day
+                            $birthday = SpecialDay::where('user_id', $record->id)
+                                ->where('title', $record->name . ' svin dzimšanas dienu!')
+                                ->first();
+
+                            if ($birthday) {
+                                // Update existing birthday
+                                $birthday->update([
+                                    'date' => $state,
+                                    'description' => ''
+                                ]);
+                            } else {
+                                // Create new birthday special day
+                                SpecialDay::create([
+                                    'user_id' => $record->id,
+                                    'title' => $record->name . ' svin dzimšanas dienu!',
+                                    'description' => '',
+                                    'date' => $state,
+                                    'repeats' => true,
+                                    'is_approved' => true
+                                ]);
+                            }
+                        }
+                    }),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->label('Phone Number'),
@@ -61,6 +92,9 @@ class UserResource extends Resource
                 TextColumn::make('nickname')
                     ->label('Lietotājvārds')
                     ->searchable(),
+                TextColumn::make('date_of_birth')
+                    ->label('Dzimšanas datums')
+                    ->date(),
                 TextColumn::make('phone')
                     ->label('Telefona numurs')
                     ->searchable(),

@@ -33,8 +33,6 @@ class SpecialDayResource extends Resource
                 Forms\Components\Textarea::make('description'),
                 Forms\Components\DatePicker::make('date')
                     ->required(),
-                Forms\Components\Toggle::make('is_approved')
-                    ->required(),
                 Forms\Components\Toggle::make('repeats')
                     ->required(),
             ]);
@@ -50,11 +48,9 @@ class SpecialDayResource extends Resource
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\TextColumn::make('date')
                     ->date(),
-                Tables\Columns\ToggleColumn::make('is_approved'),
                 Tables\Columns\ToggleColumn::make('repeats'),
             ])
             ->filters([
-                TernaryFilter::make('is_approved'),
                 TernaryFilter::make('repeats'),
             ])
             ->actions([

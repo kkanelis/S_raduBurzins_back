@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('special_days', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
             $table->date('date');
+            $table->boolean('is_approved')->default(false);
+            $table->boolean('repeats')->default(false);
             $table->timestamps();
         });
     }

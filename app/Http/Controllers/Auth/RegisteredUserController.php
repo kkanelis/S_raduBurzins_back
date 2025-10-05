@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:50',
             'last_name' => 'required|string|max:50',
-            'nickname' => 'required|string|max:50|unique:users,nickname',
+            'nickname' => 'nullable|string|max:50|unique:users,nickname',
             'phone' => 'required|string|max:12|unique:users,phone',
             'email' => 'required|string|lowercase|email|max:255|unique:users,email',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -43,17 +43,6 @@ class RegisteredUserController extends Controller
             'rules' => $request->rules,
             'date_of_birth' => $request->date_of_birth,
         ]);
-
-        // If date_of_birth is provided, add to special days
-        if ($user->date_of_birth) {
-            \App\Models\SpecialDay::create([
-                'user_id' => $user->id,
-                'title' => "{$user->first_name} {$user->last_name} svin dzimšanas dienu!",
-                'description' => null,
-                'date' => $user->date_of_birth,
-                'repeats' => true,
-            ]);
-        }
 
         event(new Registered($user));
 
