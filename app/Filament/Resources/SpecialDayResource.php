@@ -20,6 +20,8 @@ class SpecialDayResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
+    protected static ?string $navigationLabel = 'Notikumi';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -23,22 +23,24 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationLabel = 'Lietotāji';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('first_name')
                     ->required()
-                    ->label('First Name'),
+                    ->label('Vārds'),
                 Forms\Components\TextInput::make('last_name')
                     ->required()
-                    ->label('Last Name'),
+                    ->label('Uzvārds'),
                 Forms\Components\TextInput::make('nickname')
-                    ->label('Nickname'),
+                    ->label('Iesauka'),
                 Forms\Components\DatePicker::make('date_of_birth')
                     ->required()
                     ->maxDate(now())
-                    ->label('Date of Birth')
+                    ->label('Dzimšanas diena')
                     ->afterStateUpdated(function ($record, $state) {
                         if ($record && $state) {
                             // Find existing birthday special day
@@ -67,15 +69,14 @@ class UserResource extends Resource
                     }),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
-                    ->label('Phone Number'),
+                    ->label('Telefons'),
                 Forms\Components\TextInput::make('email')
                     ->email()
+                    ->label("E-Pasts")
                     ->required(),
                 Forms\Components\Toggle::make('is_approved')
+                    ->label("Vai ir apstriprināts?")
                     ->required(),
-                Forms\Components\Toggle::make('is_admin')
-                    ->required()
-                    ->label('Can Access Admin Panel'),
             ]);
     }
 
@@ -102,9 +103,8 @@ class UserResource extends Resource
                     ->label('E-pasts'),
                 ToggleColumn::make('is_approved')
                     ->label('Apstiprināts'),
-                ToggleColumn::make('is_admin')
-                    ->label('Admin privilēģijas'),
                 TextColumn::make('created_at')
+                    ->label("Profils izveidots")
                     ->dateTime(),
             ])
             ->filters([

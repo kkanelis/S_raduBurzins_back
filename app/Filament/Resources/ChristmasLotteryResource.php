@@ -18,7 +18,7 @@ class ChristmasLotteryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
 
-    protected static ?string $navigationLabel = 'Christmas Lottery';
+    protected static ?string $navigationLabel = 'Ziemassvētku Loterija';
 
     public static function form(Form $form): Form
     {

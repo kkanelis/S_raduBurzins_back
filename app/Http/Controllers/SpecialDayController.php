@@ -20,7 +20,8 @@ class SpecialDayController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'date' => 'required|date'
+            'date' => 'required|date',
+            'repeats' => 'boolean',
         ]);
 
         $specialDay = SpecialDay::create([
@@ -28,7 +29,7 @@ class SpecialDayController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'],
             'date' => $validated['date'],
-            'repeats' => false
+            'repeats' => $validated['repeats']
         ]);
 
         return response()->json([
