@@ -12,16 +12,32 @@ class SpecialDay extends Model
         'title',
         'description',
         'date',
-        'repeats'
+        'repeats',
+        'location',
+        'event_time',
+        'image_path',
+        'is_public',
+        'shared_with_user_ids',
     ];
 
     protected $casts = [
         'date' => 'date',
-        'repeats' => 'boolean'
+        'repeats' => 'boolean',
+        'is_public' => 'boolean',
+        'shared_with_user_ids' => 'array',
+    ];
+
+    protected $appends = [
+        'image_url',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path ? asset('storage/' . $this->image_path) : null;
     }
 }

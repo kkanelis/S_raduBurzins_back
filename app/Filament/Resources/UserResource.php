@@ -3,16 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use App\Models\SpecialDay;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -37,45 +33,19 @@ class UserResource extends Resource
                     ->label('Uzvārds'),
                 Forms\Components\TextInput::make('nickname')
                     ->label('Iesauka'),
-                Forms\Components\DatePicker::make('date_of_birth')
-                    ->required()
-                    ->maxDate(now())
-                    ->label('Dzimšanas diena')
-                    ->afterStateUpdated(function ($record, $state) {
-                        if ($record && $state) {
-                            // Find existing birthday special day
-                            $birthday = SpecialDay::where('user_id', $record->id)
-                                ->where('title', $record->name . ' svin dzimšanas dienu!')
-                                ->first();
-
-                            if ($birthday) {
-                                // Update existing birthday
-                                $birthday->update([
-                                    'date' => $state,
-                                    'description' => ''
-                                ]);
-                            } else {
-                                // Create new birthday special day
-                                SpecialDay::create([
-                                    'user_id' => $record->id,
-                                    'title' => $record->name . ' svin dzimšanas dienu!',
-                                    'description' => '',
-                                    'date' => $state,
-                                    'repeats' => true,
-                                    'is_approved' => true
-                                ]);
-                            }
-                        }
-                    }),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->label('Telefons'),
+                Forms\Components\DatePicker::make('date_of_birth')
+                    ->required()
+                    ->maxDate(now())
+                    ->label('Dzimšanas diena'),
                 Forms\Components\TextInput::make('email')
                     ->email()
-                    ->label("E-Pasts")
+                    ->label('E-Pasts')
                     ->required(),
                 Forms\Components\Toggle::make('is_approved')
-                    ->label("Vai ir apstriprināts?")
+                    ->label('Vai ir apstiprināts?')
                     ->required(),
             ]);
     }
@@ -84,12 +54,14 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('first_name')
-                    ->label('Vārds')
-                    ->searchable(),
-                TextColumn::make('last_name')
-                    ->label('Uzvārds')
-                    ->searchable(),
+                TextColumn::make('full_name')
+                    ->label('Pilnais vārds')
+                    ->getStateUsing(fn (User $record) => $record->full_name)
+                    ->searchable(query: function ($query, string $search) {
+                        return $query->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('nickname', 'like', "%{$search}%");
+                    }),
                 TextColumn::make('nickname')
                     ->label('Lietotājvārds')
                     ->searchable(),
@@ -97,20 +69,22 @@ class UserResource extends Resource
                     ->label('Dzimšanas datums')
                     ->date(),
                 TextColumn::make('phone')
-                    ->label('Telefona numurs')
+                    ->label('Telefons')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('E-pasts'),
+                    ->label('E-pasts')
+                    ->searchable(),
                 ToggleColumn::make('is_approved')
                     ->label('Apstiprināts'),
                 TextColumn::make('created_at')
-                    ->label("Profils izveidots")
+                    ->label('Profils izveidots')
                     ->dateTime(),
             ])
             ->filters([
                 TernaryFilter::make('is_approved'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -120,15 +94,14 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }

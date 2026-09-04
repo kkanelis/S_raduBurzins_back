@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
@@ -31,6 +31,7 @@ class User extends Authenticatable implements FilamentUser
         'is_admin',
         'terms',
         'rules',
+        'avatar_path',
     ];
 
     /**
@@ -41,6 +42,17 @@ class User extends Authenticatable implements FilamentUser
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    /**
+     * The accessors that should be appended to model arrays.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'avatar_url',
+        'name',
+        'full_name',
     ];
 
     /**
@@ -69,13 +81,16 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
-    // Update the accessor to use the newer syntax
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar_path ? asset('storage/' . $this->avatar_path) : null;
+    }
+
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
     }
 
-    // You can also keep the name accessor if needed
     public function getNameAttribute(): string
     {
         return $this->getFullNameAttribute();
