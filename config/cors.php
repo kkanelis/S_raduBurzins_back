@@ -3,7 +3,7 @@
 return [
     'paths' => ['api/*', 'broadcasting/auth'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['https://raduburzins.lv', 'https://www.raduburzins.lv'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
