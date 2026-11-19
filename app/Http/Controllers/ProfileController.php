@@ -3,28 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): Response
-    {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
-    }
-
     public function show(Request $request): JsonResponse
     {
         return response()->json([
@@ -35,52 +20,79 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): JsonResponse|RedirectResponse
+    public function update(ProfileUpdateRequest $request): JsonResponse
     {
         $user = $request->user();
         $validated = $request->validated();
 
+        $previousAvatarPath = $user->avatar_path;
+
         $user->fill($validated);
 
         if ($request->hasFile('avatar')) {
-            if ($user->avatar_path) {
-                Storage::disk('public')->delete($user->avatar_path);
+            $newPath = $this->replaceAvatar($user, $request);
+
+            try {
+                $user->save();
+            } catch (\Throwable $e) {
+                if ($newPath && Storage::disk('public')->exists($newPath)) {
+                    Storage::disk('public')->delete($newPath);
+                }
+
+                throw $e;
             }
 
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar_path = $avatarPath;
-        }
+            if ($previousAvatarPath && $previousAvatarPath !== $newPath) {
+                Storage::disk('public')->delete($previousAvatarPath);
+            }
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
-
-        if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Profile updated successfully.',
+                'message' => 'Profils saglabāts.',
                 'user' => $user->fresh(),
             ]);
         }
 
-        return redirect()->route('profile.edit');
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profils saglabāts.',
+            'user' => $user->fresh(),
+        ]);
     }
+
+    // Avatar funkcijas
 
     public function avatar(Request $request): JsonResponse
     {
         $request->validate([
-            'avatar' => ['required', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $user = $request->user();
+        $previousAvatarPath = $user->avatar_path;
 
-        if ($user->avatar_path) {
-            Storage::disk('public')->delete($user->avatar_path);
+        if ($request->hasFile('avatar')) {
+            $newPath = $this->replaceAvatar($user, $request);
+
+            try {
+                $user->save();
+            } catch (\Throwable $e) {
+                if ($newPath && Storage::disk('public')->exists($newPath)) {
+                    Storage::disk('public')->delete($newPath);
+                }
+
+                throw $e;
+            }
+
+            if ($previousAvatarPath && $previousAvatarPath !== $newPath) {
+                Storage::disk('public')->delete($previousAvatarPath);
+            }
+
+            return response()->json([
+                'message' => 'Avatar updated successfully.',
+                'user' => $user->fresh(),
+            ]);
         }
-
-        $avatarPath = $request->file('avatar')->store('avatars', 'public');
-        $user->avatar_path = $avatarPath;
         $user->save();
 
         return response()->json([
@@ -89,24 +101,16 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    private function replaceAvatar(User $user, Request $request): string
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+        $newPath = $request->file('avatar')->store('avatars', 'public');
 
-        $user = $request->user();
+        if (! $newPath) {
+            throw new \RuntimeException('Avatar file could not be stored.');
+        }
 
-        Auth::logout();
+        $user->avatar_path = $newPath;
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return $newPath;
     }
 }

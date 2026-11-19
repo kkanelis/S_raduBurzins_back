@@ -10,7 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 
 class ChristmasLotteryResource extends Resource
 {
@@ -29,13 +28,15 @@ class ChristmasLotteryResource extends Resource
                         date('Y') => date('Y'),
                         date('Y') + 1 => date('Y') + 1,
                     ])
-                    ->required(),
+                    ->required()
+                    ->rules(['integer']),
                 Forms\Components\Select::make('participants')
                     ->multiple()
                     ->options(fn () => User::where('is_approved', true)
                         ->get()
                         ->mapWithKeys(fn ($user) => [$user->id => $user->full_name]))
                     ->required()
+                    ->rules(['array', 'min:2'])
                     ->label('Select Participants'),
             ]);
     }
@@ -51,9 +52,6 @@ class ChristmasLotteryResource extends Resource
                 Tables\Columns\TextColumn::make('year')
                     ->label('Gads')
                     ->sortable(),
-            ])
-            ->filters([
-                //
             ]);
     }
 

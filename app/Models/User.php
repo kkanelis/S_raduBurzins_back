@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -50,7 +50,6 @@ class User extends Authenticatable implements FilamentUser
      * @var list<string>
      */
     protected $appends = [
-        'avatar_url',
         'name',
         'full_name',
     ];
@@ -81,11 +80,6 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
-    public function getAvatarUrlAttribute(): ?string
-    {
-        return $this->avatar_path ? asset('storage/' . $this->avatar_path) : null;
-    }
-
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
@@ -98,6 +92,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->is_admin;
+        return $this->is_admin && $this->is_approved;
     }
 }
