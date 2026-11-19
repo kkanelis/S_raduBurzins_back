@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/raduburz/laravel
+    - /bin/mkdir -p "$DEPLOYPATH"
+    - test -f "$DEPLOYPATH/.env" || { echo "Create the production .env at $DEPLOYPATH/.env before deploying."; exit 1; }
+    - rsync -a --exclude='.git/' --exclude='.env' --exclude='vendor/' --exclude='node_modules/' --exclude='storage/' ./ "$DEPLOYPATH"/
+    - /bin/mkdir -p "$DEPLOYPATH/storage/app/private" "$DEPLOYPATH/storage/app/public" "$DEPLOYPATH/storage/framework/cache/data" "$DEPLOYPATH/storage/framework/sessions" "$DEPLOYPATH/storage/framework/testing" "$DEPLOYPATH/storage/framework/views" "$DEPLOYPATH/storage/logs"
+    - composer install --working-dir="$DEPLOYPATH" --no-dev --no-interaction --prefer-dist --optimize-autoloader

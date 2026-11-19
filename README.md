@@ -82,6 +82,12 @@ Reverb lokālajā konfigurācijā backend un frontend jāizmanto viena un tā pa
 
 Frontend pieslēdzas WebSocket serverim tieši, bet API pieprasījumus lokālajā izstrādē Vite pārsūta uz Laravel. Skatīt [frontend konfigurāciju](../raduBurzins_front/README.md#vides-mainigie-un-api-proxy).
 
+## cPanel izvietošana
+
+Repozitorija `.cpanel.yml` izvieto Laravel kodu `/home2/raduburz/laravel`, saglabājot servera `.env`, `vendor` un `storage` mapes, un pēc tam palaiž `composer install`. Pirms pirmās izvietošanas izveido produkcijas `.env` ar pareizu `APP_KEY`, datubāzes pieslēgumu un produkcijas URL; `.env` netiek kopēts no Git.
+
+cPanel API apakšdomēna `api.raduburzins.lv` document root iestati uz `/home2/raduburz/laravel/public`, nevis uz pašu Laravel projekta sakni. Pēc pirmās izvietošanas pārbaudi `storage` un `bootstrap/cache` rakstīšanas atļaujas, izveido `storage:link`, ja vajadzīga publisko failu piegāde, un datubāzes migrācijas palaid atsevišķi ar `php artisan migrate --force`. Deploy automātiski nepalaiž migrācijas un neiedarbina ilgstoši darbojošos Reverb procesu.
+
 ## Pārbaudes un noderīgas komandas
 
 ```powershell
