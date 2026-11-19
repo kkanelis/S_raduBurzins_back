@@ -1,3 +1,5 @@
+TESSSSSSSSSSST
+
 # Radu Burziņš: Backend
 
 Laravel 12 API, autentifikācija, datubāze, privāto failu piegāde un Reverb notikumi.
