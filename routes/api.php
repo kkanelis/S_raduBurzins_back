@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChristmasLotteryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NamedaysController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialDayController;
@@ -26,6 +27,8 @@ Route::post('/email/verification-notification', [EmailVerificationController::cl
 Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
 Route::middleware(['auth:sanctum', 'verified', EnsureUserIsApproved::class])->group(function () {
+    Route::post('/feedback', [FeedbackController::class, 'store'])->middleware('throttle:3,10');
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

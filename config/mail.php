@@ -115,4 +115,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Radu Burziņš'),
     ],
 
+    'feedback_to' => env('FEEDBACK_TO_EMAIL', 'mail@raduburzins.lv'),
+
 ];

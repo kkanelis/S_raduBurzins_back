@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Mail\FeedbackSubmission;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
@@ -118,5 +120,45 @@ class EmailVerificationTest extends TestCase
             ->assertJsonPath('user.email_verified_at', null);
 
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    public function test_approved_user_can_send_feedback_to_the_configured_inbox(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+            'is_approved' => true,
+        ]);
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson('/api/feedback', [
+                'type' => 'Ideja',
+                'message' => 'Pievienot paziņojumus par ģimenes pasākumiem.',
+            ])
+            ->assertOk()
+            ->assertJsonPath('message', 'Paldies! Tava ziņa ir nosūtīta.');
+
+        Mail::assertSent(FeedbackSubmission::class, function (FeedbackSubmission $mail) use ($user): bool {
+            return $mail->hasTo(config('mail.feedback_to'))
+                && $mail->userEmail === $user->email
+                && $mail->type === 'Ideja'
+                && $mail->feedbackMessage === 'Pievienot paziņojumus par ģimenes pasākumiem.';
+        });
+    }
+
+    public function test_feedback_requires_valid_type_and_message(): void
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+            'is_approved' => true,
+        ]);
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson('/api/feedback', [
+                'type' => 'Other',
+                'message' => 'No',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['type', 'message']);
     }
 }

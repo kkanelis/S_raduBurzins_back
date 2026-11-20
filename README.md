@@ -103,9 +103,12 @@ MAIL_USERNAME=mail@raduburzins.lv
 MAIL_PASSWORD=<šīs e-pasta pastkastes parole>
 MAIL_FROM_ADDRESS=mail@raduburzins.lv
 MAIL_FROM_NAME="Radu Burziņš"
+FEEDBACK_TO_EMAIL=mail@raduburzins.lv
 ```
 
 Ja cPanel norāda portu `587` un STARTTLS, iestati `MAIL_PORT=587` un `MAIL_SCHEME=smtp`. `.env` failā ievadi īsto pastkastes paroli; nekad neievieto to repozitorijā vai frontend konfigurācijā. Pēc izmaiņām palaid `php artisan config:clear` (vai atjauno konfigurācijas kešu ar `php artisan config:cache`). Pārbaudi reģistrāciju ar reālu e-pasta adresi un apstiprinājuma saiti. Nepārbaudīts e-pasts nevar pieslēgties; pēc apstiprināšanas kontam joprojām vajadzīgs administratora apstiprinājums.
+
+Sākumlapas atsauksmju un ideju forma ziņas sūta uz `FEEDBACK_TO_EMAIL`; ja mainīgais nav iestatīts, izmanto `mail@raduburzins.lv`. Forma pieejama apstiprinātiem lietotājiem, un ziņai var tieši atbildēt uz tās autora e-pastu.
 
 ## Pārbaudes un noderīgas komandas
 
