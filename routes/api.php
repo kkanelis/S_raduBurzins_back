@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum', EnsureUserIsApproved::class])->group(function
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'show']);
+    Route::get('/profile/avatar', [ProfileController::class, 'showAvatar']);
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::post('/profile/avatar', [ProfileController::class, 'avatar']);
 

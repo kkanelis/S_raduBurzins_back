@@ -19,6 +19,8 @@
 /storage/*.key
 /storage/pail
 /storage/framework/lsp-*.php
+/config/cors.php
+/vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db

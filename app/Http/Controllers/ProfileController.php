@@ -17,6 +17,21 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function showAvatar(Request $request)
+    {
+        $avatarPath = $request->user()->avatar_path;
+
+        if (! $avatarPath || ! Storage::disk('public')->exists($avatarPath)) {
+            abort(404);
+        }
+
+        $mimeType = Storage::disk('public')->mimeType($avatarPath) ?: 'application/octet-stream';
+
+        return response()->file(Storage::disk('public')->path($avatarPath), [
+            'Content-Type' => $mimeType,
+        ]);
+    }
+
     /**
      * Update the user's profile information.
      */
