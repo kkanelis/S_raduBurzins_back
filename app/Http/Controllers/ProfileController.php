@@ -43,6 +43,11 @@ class ProfileController extends Controller
         $previousAvatarPath = $user->avatar_path;
 
         $user->fill($validated);
+        $emailChanged = $user->isDirty('email');
+
+        if ($emailChanged) {
+            $user->email_verified_at = null;
+        }
 
         if ($request->hasFile('avatar')) {
             $newPath = $this->replaceAvatar($user, $request);
@@ -61,6 +66,10 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($previousAvatarPath);
             }
 
+            if ($emailChanged) {
+                $user->sendEmailVerificationNotification();
+            }
+
             return response()->json([
                 'message' => 'Profils saglabāts.',
                 'user' => $user->fresh(),
@@ -68,6 +77,10 @@ class ProfileController extends Controller
         }
 
         $user->save();
+
+        if ($emailChanged) {
+            $user->sendEmailVerificationNotification();
+        }
 
         return response()->json([
             'message' => 'Profils saglabāts.',

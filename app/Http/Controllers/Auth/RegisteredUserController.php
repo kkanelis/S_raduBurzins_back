@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Reģistrācija veiksmīga! Tavs lietotāja konts tika nosūtīts apstiprināšanai.',
+            'message' => 'Reģistrācija veiksmīga! Apstiprini e-pasta adresi, izmantojot nosūtīto saiti. Pēc tam administratoram jāapstiprina konts.',
         ], 201);
     }
 }

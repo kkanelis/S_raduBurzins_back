@@ -88,6 +88,25 @@ Repozitorija `.cpanel.yml` izvieto Laravel kodu `/home2/raduburz/laravel`, sagla
 
 cPanel API apakšdomēna `api.raduburzins.lv` document root iestati uz `/home2/raduburz/laravel/public`, nevis uz pašu Laravel projekta sakni. Pēc pirmās izvietošanas pārbaudi `storage` un `bootstrap/cache` rakstīšanas atļaujas, izveido `storage:link`, ja vajadzīga publisko failu piegāde, un datubāzes migrācijas palaid atsevišķi ar `php artisan migrate --force`. Deploy automātiski nepalaiž migrācijas un neiedarbina ilgstoši darbojošos Reverb procesu.
 
+### SMTP e-pasta apstiprināšana
+
+Lietotāja reģistrācija nosūta Laravel e-pasta apstiprinājuma ziņojumu no `mail@raduburzins.lv`. cPanel `Email Accounts` sadaļā atver `Connect Devices` un izmanto tur norādīto SMTP serveri, portu un šifrēšanu; servera adrese var atšķirties no `mail.raduburzins.lv`. Produkcijas backend `.env` iestati:
+
+```dotenv
+APP_URL=https://api.raduburzins.lv
+FRONTEND_URL=https://raduburzins.lv
+MAIL_MAILER=smtp
+MAIL_HOST=<SMTP serveris no cPanel Connect Devices>
+MAIL_PORT=465
+MAIL_SCHEME=smtps
+MAIL_USERNAME=mail@raduburzins.lv
+MAIL_PASSWORD=<šīs e-pasta pastkastes parole>
+MAIL_FROM_ADDRESS=mail@raduburzins.lv
+MAIL_FROM_NAME="Radu Burziņš"
+```
+
+Ja cPanel norāda portu `587` un STARTTLS, iestati `MAIL_PORT=587` un `MAIL_SCHEME=smtp`. `.env` failā ievadi īsto pastkastes paroli; nekad neievieto to repozitorijā vai frontend konfigurācijā. Pēc izmaiņām palaid `php artisan config:clear` (vai atjauno konfigurācijas kešu ar `php artisan config:cache`). Pārbaudi reģistrāciju ar reālu e-pasta adresi un apstiprinājuma saiti. Nepārbaudīts e-pasts nevar pieslēgties; pēc apstiprināšanas kontam joprojām vajadzīgs administratora apstiprinājums.
+
 ## Pārbaudes un noderīgas komandas
 
 ```powershell

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChristmasLotteryController;
@@ -16,14 +17,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-Route::middleware(['auth:sanctum', EnsureUserIsApproved::class])->group(function () {
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+    ->middleware('throttle:6,1')
+    ->name('verification.send');
+Route::middleware('auth:sanctum')->post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+
+Route::middleware(['auth:sanctum', 'verified', EnsureUserIsApproved::class])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     // AUTH routes
-
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'show']);

@@ -18,6 +18,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $user = Auth::user();
 
+        if (! $user->hasVerifiedEmail()) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => ['Pirms pieslēgšanās apstiprini savu e-pasta adresi.'],
+            ]);
+        }
+
         if (! $user->is_approved) {
             Auth::logout();
             throw ValidationException::withMessages([
