@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChristmasLotteryController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\FamilyPearlController;
 use App\Http\Controllers\NamedaysController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialDayController;
@@ -75,4 +76,13 @@ Route::middleware(['auth:sanctum', 'verified', EnsureUserIsApproved::class])->gr
 
     // Christmas lottery routes
     Route::get('/christmas-lottery', [ChristmasLotteryController::class, 'index']);
+
+    // Family pearls
+    Route::get('/family-pearls/options', [FamilyPearlController::class, 'options']);
+    Route::get('/family-pearls', [FamilyPearlController::class, 'index']);
+    Route::post('/family-pearls', [FamilyPearlController::class, 'store']);
+    Route::get('/family-pearls/media/{media}/file', [FamilyPearlController::class, 'media']);
+    Route::post('/family-pearls/{pearl}/react', [FamilyPearlController::class, 'react']);
+    Route::delete('/family-pearls/{pearl}/react', [FamilyPearlController::class, 'removeReaction']);
+    Route::get('/family-pearls/{pearl}', [FamilyPearlController::class, 'show']);
 });

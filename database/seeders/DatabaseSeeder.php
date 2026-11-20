@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             NamedaySeeder::class,
             SurnamedaySeeder::class,
             SpecialDayDemoSeeder::class,
+            FamilyPearlSeeder::class,
         ]);
     }
 }
