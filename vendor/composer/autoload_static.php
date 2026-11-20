@@ -709,6 +709,7 @@ class ComposerStaticInit9a5f7a8e1ef0e6ce3d3ef772109a43b4
         'App\\Filament\\Resources\\UserResource\\Pages\\ListUsers' => __DIR__ . '/../..' . '/app/Filament/Resources/UserResource/Pages/ListUsers.php',
         'App\\Http\\Controllers\\AlbumController' => __DIR__ . '/../..' . '/app/Http/Controllers/AlbumController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
+        'App\\Http\\Controllers\\Auth\\EmailVerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/EmailVerificationController.php',
         'App\\Http\\Controllers\\Auth\\RegisteredUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisteredUserController.php',
         'App\\Http\\Controllers\\ChatMessageController' => __DIR__ . '/../..' . '/app/Http/Controllers/ChatMessageController.php',
         'App\\Http\\Controllers\\ChristmasLotteryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ChristmasLotteryController.php',

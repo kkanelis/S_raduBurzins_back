@@ -26,6 +26,7 @@ return array(
     'App\\Filament\\Resources\\UserResource\\Pages\\ListUsers' => $baseDir . '/app/Filament/Resources/UserResource/Pages/ListUsers.php',
     'App\\Http\\Controllers\\AlbumController' => $baseDir . '/app/Http/Controllers/AlbumController.php',
     'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => $baseDir . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
+    'App\\Http\\Controllers\\Auth\\EmailVerificationController' => $baseDir . '/app/Http/Controllers/Auth/EmailVerificationController.php',
     'App\\Http\\Controllers\\Auth\\RegisteredUserController' => $baseDir . '/app/Http/Controllers/Auth/RegisteredUserController.php',
     'App\\Http\\Controllers\\ChatMessageController' => $baseDir . '/app/Http/Controllers/ChatMessageController.php',
     'App\\Http\\Controllers\\ChristmasLotteryController' => $baseDir . '/app/Http/Controllers/ChristmasLotteryController.php',

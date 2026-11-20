@@ -31,6 +31,17 @@ class EmailVerificationTest extends TestCase
 
         Notification::assertSentTo($user, VerifyEmail::class);
         $this->assertNull($user->email_verified_at);
+
+        Notification::assertSentTo($user, VerifyEmail::class, function (VerifyEmail $notification) use ($user): bool {
+            $mail = $notification->toMail($user);
+
+            return $mail->subject === 'Apstiprini savu e-pasta adresi | Radu Burziņš'
+                && $mail->view === [
+                    'html' => 'emails.verify-email',
+                    'text' => 'emails.verify-email-text',
+                ]
+                && $mail->viewData['userName'] === $user->first_name;
+        });
     }
 
     public function test_signed_verification_link_marks_email_verified(): void
